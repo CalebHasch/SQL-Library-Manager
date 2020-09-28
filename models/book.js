@@ -33,3 +33,19 @@ module.exports = (sequelize) => {
     }
   })
 }
+
+(async () => {
+  await sequelize.sync({ force: true });
+
+  try {
+    // Instance of the Movie class represents a database row
+    const book = await Book.create({
+      title: 'Toy Story',
+      author: 'Mat',
+    });
+    console.log(book.toJSON());
+
+  } catch (error) {
+    console.error('Error connecting to the database: ', error);
+  }     
+})();
