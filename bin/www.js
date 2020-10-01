@@ -13,7 +13,7 @@ var sequelize = require('../models').sequelize;
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '5000');
 app.set('port', port);
 
 /**
@@ -28,7 +28,8 @@ var server = http.createServer(app);
 
 sequelize.sync().then(() => {
   server.listen(port);
-});server.on('error', onError);
+});
+server.on('error', onError);
 server.on('listening', onListening);
 
 /**
