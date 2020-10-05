@@ -9,14 +9,14 @@ function asyncHandler(cb){
     try {
       await cb(req, res, next)
     } catch(error){
-      res.status(500).send(error);
+      next(error);
     }
   }
 }
 
 // Get all books
 router.get('/', asyncHandler(async (req, res) => {
-  const books = await Book.findall();
+  const books = await Book.findAll();
   res.render('books/index', { books, title: 'Books' });
 }));
 

@@ -2,7 +2,7 @@ extends layout
 
 block content
   h1 Update Book
-    form(method='post' action=`/books/${book.id}`)
+    form(method="post" action=`/books/${book.id}`)
       if errors
         h2.error Uh oh!
         ul.error
@@ -11,25 +11,22 @@ block content
       p
         label(for="title") Title
         input(name="title" type="text" value=book.title)
-      
+
       p
         label(for="author") Author
-        input(name="author" type="text" value=book.author)
-      
+        input(name="author" type="text" Value=book.author)
+
       p
         label(for="genre") Genre
-        input(name="genre" type="text" value=book.genre)
-      
+        input(name="genre" type="text" Value=book.genre)
+
       p
         label(for="year") Year
         input(name="year" type="text" value=book.year)
-      
+
       p
         input(type="submit" value="Update Book")
-        
+
     form(method="post" action=`/books/${book.id}/delete` onsubmit="return confirm('Do you really want to delete this book?');")
       p
         a.button(href="/") Cancel
-      
-      p
-        input(type="submit" value="Delete Book")
