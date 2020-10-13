@@ -9,7 +9,8 @@ function asyncHandler(cb){
     try {
       await cb(req, res, next)
     } catch(error){
-      next(error);
+      console.log(error)
+      res.status(500).send(error)
     }
   }
 }
@@ -17,12 +18,12 @@ function asyncHandler(cb){
 // Get all books
 router.get('/', asyncHandler(async (req, res) => {
   const books = await Book.findAll();
-  res.render('books/index', { books, title: 'Books' });
+  res.render('index', { books, title: 'Books' });
 }));
 
 // Create a new book
 router.get('/new', (req, res) => {
-  res.render('books/new-book', { book: {}, title: 'New Book' });
+  res.render('new-book', { book: {}, title: 'New Book' });
 });
 
 // Post created book
@@ -34,32 +35,23 @@ router.post('/new', asyncHandler(async (req, res) => {
   } catch (error) {
     if(error.name === 'SequelizeValidationError') {
       book = await Book.build(req.body);
-      res.render('books/new-book', { book, errors: error.errors, title: 'New Book' });
+      res.render('new-book', { book, errors: error.errors, title: 'New Book' });
     } else {
       throw error;
     }
   }
-}))
+}));
 
 //Update Book form
 router.get('/:id', asyncHandler(async(req, res) => {
   const book = await Book.findByPk(req.params.id);
   if(book) {
-    res.render('books/update-book', { book, title: 'Update Book'});
+    res.render('update-book', { book, title: 'Update Book'});
   } else {
     res.sendStatus(404);
   }
 }))
 
-// Get individual book
-router.get('/:id', asyncHandler(async (req, res) => {
-  const book = await Book.findByPk(req.params.id);
-  if(book) {
-    res.render('book/index', { book, title: article.title });
-  } else {
-    res.sendStatus(404);
-  }
-}));
 
 // Update a book
 router.post('/:id', asyncHandler(async (req, res) => {
@@ -75,7 +67,7 @@ router.post('/:id', asyncHandler(async (req, res) => {
   } catch (error) {
     if(error.name === 'SequelizeValidationError') {
       book = await Book.build(req.body);
-      res.render('books/new-book', { book, errors: error.errors, title: 'Update Book' });
+      res.render('update-book', { book, errors: error.errors, title: 'Update Book' });
     } else {
       throw error;
     }

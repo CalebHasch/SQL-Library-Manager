@@ -1,31 +1,11 @@
 extends layout
 
 block content
-  h1 New Book
-  form(method="post" action="/books/new")
-   if errors
-    h2.error Uh oh!
-    ul.error
-      each error in errors
-        li= error.message
-  p
-    label(for="title") Title
-    input#title(name="title" type="text")
+    include form
 
-  p
-    label(for="author") Author
-    input#author(name="author" type="text")
+    h1= title
 
-  p
-    label(for="genre") Genre
-    input#genre(name="genre" type="text")
+    include form-error
 
-  p
-    label(for="year") Year
-    input#year(name="year" type="text")
-
-  p
-    input(type="submit" value="Create New Book")
-
-  P
-    a.button(href="/books") Cancel
+    form(action='/books/new', method='post')
+        +form('Create New Book')

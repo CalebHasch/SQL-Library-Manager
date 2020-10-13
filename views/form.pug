@@ -1,0 +1,17 @@
+mixin form(buttonText)
+    p
+        label(for='title') Title
+        input#title(name='title' type='text' value=book.title)
+    p
+        label(for='author') Author
+        input#author(name='author' type='text' value=book.author)
+    p
+        label(for='genre') Genre
+        input#genre(name='genre' type='text' value=book.genre)
+    p
+        label(for='year') Year
+        input#year(name='year' type='text' value=book.year)
+    p
+        input(type='submit' value=`${buttonText}`)
+    p
+        a.button(href='/books') Cancel
