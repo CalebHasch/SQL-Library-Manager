@@ -43,13 +43,15 @@ router.post('/new', asyncHandler(async (req, res) => {
 }));
 
 //Update Book form
-router.get('/:id', asyncHandler(async(req, res) => {
+router.get('/:id', asyncHandler(async(req, res, next) => {
   const book = await Book.findByPk(req.params.id);
   if(book) {
     res.render('update-book', { book, title: 'Update Book'});
   } else {
-    res.sendStatus(404);
-  }
+    const err = new Error();
+    err.status = 404;
+    err.message = `Looks like the quote you requested doesn't exist.`
+    next(err);  }
 }))
 
 
@@ -69,7 +71,7 @@ router.post('/:id', asyncHandler(async (req, res) => {
       book = await Book.build(req.body);
       res.render('update-book', { book, errors: error.errors, title: 'Update Book' });
     } else {
-      throw error;
+      res.redirect('/');
     }
   }
 

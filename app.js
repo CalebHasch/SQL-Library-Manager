@@ -36,18 +36,20 @@ app.use('/books', books);
 
 // catch 404 
 app.use( (req, res, next) => {
-  next(createError(404, 'Page not found'));
+  const error = new Error();
+  error.status = 404;
+  error.message = `Page not found.`
+  res.render('page-not-found', {error});
 });
 
 // error handler
 app.use( (err, req, res, next) => {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  console.log(err);
-  res.render('error');
+  if(err.status === 404) {
+    res.status(404).render('page-not-found', {err});
+  } else {
+    err.message = err.message || `Oops! It looks like something went wrong on the server.`;
+    res.status(err.status || 500).render('error', {err});
+  }
 });
 
 
