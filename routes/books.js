@@ -18,8 +18,47 @@ function asyncHandler(cb){
 // Get all books
 router.get('/', asyncHandler(async (req, res) => {
   const books = await Book.findAll();
-  res.render('index', { books, title: 'Books' });
+  let pages = [1, 2]
+  //Pagination function
+  function pagination(list, page) {
+    const booksPerPage = 10;
+    let startIndex = page * booksPerPage - booksPerPage;
+    let endIndex = page * booksPerPage;
+    let bookList = []
+    for (let i = 0; i < list.length; i++) {
+      if (i >= startIndex && i < endIndex) {
+        bookList.push(list[i]);
+      }
+    }
+    console.log(bookList.length);
+    res.render('index', { books: bookList, pages });
+  }
+  
+  //console.log(books[1].dataValues.year);
+
+  //search function
+  function search(searchInput) {
+    let bookResults = [];
+    for (let i = 0; i < books.length; i++) {
+      if(books[i].dataValues.title.toLowerCase().includes(searchInput.toLowerCase())) {
+        bookResults.push(books[i]);
+      } else if(books[i].dataValues.author.toLowerCase().includes(searchInput.toLowerCase())) {
+        bookResults.push(books[i]);
+      } else if(books[i].dataValues.genre.toLowerCase().includes(searchInput.toLowerCase())) {
+        bookResults.push(books[i]);
+      // } else if(books[i].dataValues.year.includes(searchInput.toLowerCase())) {
+      //   bookResults.push(books[i]);
+      }
+    }
+    console.log(bookResults.length);
+    //res.render('index', { books: books, title: 'Books'});
+  }
+  //search('fiction');
+  pagination(books, 1);
 }));
+
+// Search Route
+//router.get('/search', (req, res) => {})
 
 // Create a new book
 router.get('/new', (req, res) => {

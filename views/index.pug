@@ -3,6 +3,7 @@ extends layout
 block content
     header
     h1 Books
+    input#search(name='search' type='text')
     P
         a.button(href="/books/new") Create New Book
     table
@@ -20,3 +21,5 @@ block content
                     td= book.author
                     td= book.genre
                     td= book.year
+    each page in pages
+        a.button(href="/books")= page
