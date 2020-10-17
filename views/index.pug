@@ -4,6 +4,7 @@ block content
     header
     h1 Books
     input#search(name='search' type='text')
+    a.button(href="/books/search/" + search) Search
     P
         a.button(href="/books/new") Create New Book
     table
@@ -22,4 +23,4 @@ block content
                     td= book.genre
                     td= book.year
     each page in pages
-        a.button(href="/books")= page
+        a.button(href=`/books/page/${page}`)= page

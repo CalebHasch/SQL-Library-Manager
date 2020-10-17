@@ -4,6 +4,9 @@ const Book = require('../models').Book;
 const { Sequelize } = require('../models');
 const Op = Sequelize.Op;
 
+const booksPerPage = 10;
+let pages = []
+
 function asyncHandler(cb){
   return async(req, res, next) => {
     try {
@@ -15,16 +18,12 @@ function asyncHandler(cb){
   }
 }
 
-// Get all books
-router.get('/', asyncHandler(async (req, res) => {
-  const books = await Book.findAll();
-  let pages = [1, 2]
   //Pagination function
-  function pagination(list, page) {
-    const booksPerPage = 10;
+  function pagination(list, page, booksPerPage, res) {
     let startIndex = page * booksPerPage - booksPerPage;
     let endIndex = page * booksPerPage;
     let bookList = []
+
     for (let i = 0; i < list.length; i++) {
       if (i >= startIndex && i < endIndex) {
         bookList.push(list[i]);
@@ -33,32 +32,52 @@ router.get('/', asyncHandler(async (req, res) => {
     console.log(bookList.length);
     res.render('index', { books: bookList, pages });
   }
+
+// Get all books
+router.get('/', asyncHandler(async (req, res) => {
+  const books = await Book.findAll();
+  const numberOfPages = Math.ceil(books.length/booksPerPage);
+  pages = [];
+
+  for (let j = 1; j <= numberOfPages; j++) {
+    pages.push(j);
+  }
   
-  //console.log(books[1].dataValues.year);
+  pagination(books, 1, booksPerPage, res);
+}));
+
+// Route for pages in pagination
+router.get('/page/:id', asyncHandler(async (req, res) => {
+  const books = await Book.findAll();
+  console.log(req.params.id);
+  pagination(books, req.params.id, booksPerPage, res);
+}));
+
+// Search route
+router.get('/search/:id', asyncHandler(async (req, res) => {
+  const books = await Book.findAll();
 
   //search function
   function search(searchInput) {
     let bookResults = [];
+    pages = [];
+
     for (let i = 0; i < books.length; i++) {
-      if(books[i].dataValues.title.toLowerCase().includes(searchInput.toLowerCase())) {
+      if(books[i].dataValues.title.toLowerCase().includes(String(searchInput).toLowerCase())) {
         bookResults.push(books[i]);
-      } else if(books[i].dataValues.author.toLowerCase().includes(searchInput.toLowerCase())) {
+      } else if(books[i].dataValues.author.toLowerCase().includes(String(searchInput).toLowerCase())) {
         bookResults.push(books[i]);
-      } else if(books[i].dataValues.genre.toLowerCase().includes(searchInput.toLowerCase())) {
+      } else if(books[i].dataValues.genre.toLowerCase().includes(String(searchInput).toLowerCase())) {
         bookResults.push(books[i]);
-      // } else if(books[i].dataValues.year.includes(searchInput.toLowerCase())) {
-      //   bookResults.push(books[i]);
+      } else if(String(books[i].dataValues.year).includes(String(searchInput).toLowerCase())) {
+        bookResults.push(books[i]);
       }
     }
     console.log(bookResults.length);
-    //res.render('index', { books: books, title: 'Books'});
+    res.render('index', { books: bookResults, pages });
   }
-  //search('fiction');
-  pagination(books, 1);
+  search(req.params.id);
 }));
-
-// Search Route
-//router.get('/search', (req, res) => {})
 
 // Create a new book
 router.get('/new', (req, res) => {
@@ -108,6 +127,7 @@ router.post('/:id', asyncHandler(async (req, res) => {
   } catch (error) {
     if(error.name === 'SequelizeValidationError') {
       book = await Book.build(req.body);
+      book.id = req.params.id;
       res.render('update-book', { book, errors: error.errors, title: 'Update Book' });
     } else {
       res.redirect('/');
