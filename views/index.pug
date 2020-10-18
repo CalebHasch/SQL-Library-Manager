@@ -3,8 +3,9 @@ extends layout
 block content
     header
     h1 Books
-    input#search(name='search' type='text')
-    a.button(href="/books/search/" + search) Search
+    form(action="/books/search", method="post")
+        input(name="search" type="text"  placeholder="Search for a book here")
+        input#search(type="submit" value="Search")
     P
         a.button(href="/books/new") Create New Book
     table

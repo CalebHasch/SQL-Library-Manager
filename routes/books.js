@@ -29,7 +29,6 @@ function asyncHandler(cb){
         bookList.push(list[i]);
       }
     }
-    console.log(bookList.length);
     res.render('index', { books: bookList, pages });
   }
 
@@ -49,14 +48,13 @@ router.get('/', asyncHandler(async (req, res) => {
 // Route for pages in pagination
 router.get('/page/:id', asyncHandler(async (req, res) => {
   const books = await Book.findAll();
-  console.log(req.params.id);
   pagination(books, req.params.id, booksPerPage, res);
 }));
 
 // Search route
-router.get('/search/:id', asyncHandler(async (req, res) => {
+router.post('/search', asyncHandler(async (req, res) => {
   const books = await Book.findAll();
-
+  console.log(req.body.search)
   //search function
   function search(searchInput) {
     let bookResults = [];
@@ -73,10 +71,9 @@ router.get('/search/:id', asyncHandler(async (req, res) => {
         bookResults.push(books[i]);
       }
     }
-    console.log(bookResults.length);
     res.render('index', { books: bookResults, pages });
   }
-  search(req.params.id);
+  search(req.body.search);
 }));
 
 // Create a new book
